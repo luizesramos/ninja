@@ -4,7 +4,7 @@ import java.awt.event.*;
 
 public class Game extends JFrame implements TimerThread.Engine, KeyListener, MouseListener { // , ActionListener {
   // Midi music;
-  Maze maze;
+  Scene maze;
   Dude dude;
   ArrayList<Movable> stuff; // list of stuff on the screen (on top of the maze)
 
@@ -12,13 +12,13 @@ public class Game extends JFrame implements TimerThread.Engine, KeyListener, Mou
     super(s);
     stuff = new ArrayList<Movable>();
 
-    maze = new Maze();
+    maze = new Scene();
     getContentPane().add(maze);
     maze.stuff = stuff;
     this.addKeyListener(this);
     this.addMouseListener(this);
 
-    dude = new Dude(maze.grid);
+    dude = new Dude();
     stuff.add(dude);
 
     setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
@@ -51,7 +51,7 @@ public class Game extends JFrame implements TimerThread.Engine, KeyListener, Mou
 
   public void restart() {
     dude.dead = false;
-    dude.p.setLocation(getWidth() / 2, 0.4 * getHeight());
+    dude.p.setLocation(getWidth() * 0.5, getHeight() * 0.7);
     maze.gameOver = false;
   }
 
@@ -79,13 +79,13 @@ public class Game extends JFrame implements TimerThread.Engine, KeyListener, Mou
         break;
 
       case KeyEvent.VK_F2:
-        maze.grid.visible = !maze.grid.visible;
+        // maze.grid.visible = !maze.grid.visible;
         break;
       case KeyEvent.VK_F3:
-        maze.grid.showWalls = !maze.grid.showWalls;
+        // maze.grid.showWalls = !maze.grid.showWalls;
         break;
       case KeyEvent.VK_F4:
-        maze.grid.viewPositions = !maze.grid.viewPositions;
+        // maze.grid.viewPositions = !maze.grid.viewPositions;
         break;
       case KeyEvent.VK_F5:
         restart();

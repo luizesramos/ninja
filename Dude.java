@@ -5,7 +5,7 @@ public class Dude extends Movable {
   final static int LOHIT_FRAMES  = 3;
   boolean dead, celebrating, hitting;
 
-  public Dude(Grid g) {
+  public Dude() {
     int i;
     for(i=1; i<=7; i++) spriteMan.addSprite("res/rain/rain-stop"+i+".gif");
     for(i=1; i<=9; i++) spriteMan.addSprite("res/rain/rain-walk"+i+".gif");
@@ -19,7 +19,7 @@ public class Dude extends Movable {
     spriteMan.addPartition(23, 27); // LOW HIT frames
     spriteMan.setActivePartition(STILL_FRAMES);
 
-    init(spriteMan.getMaxImageDimension(), g, 0.25);
+    init(spriteMan.getMaxImageDimension(), 0.25);
 
     dirX = Movable.STOP;
     dirY = Movable.STOP;
