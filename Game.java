@@ -3,18 +3,17 @@ import java.util.ArrayList;
 import java.awt.event.*;
 
 public class Game extends JFrame implements TimerThread.Engine, KeyListener, MouseListener { // , ActionListener {
-  // Midi music;
-  Scene maze;
-  Dude dude;
-  ArrayList<Movable> stuff; // list of stuff on the screen (on top of the maze)
+  private Scene scene;
+  private Dude dude;
+  private ArrayList<Movable> stuff; // list of stuff on the screen (on top of the scene)
 
   public Game(String s) {
     super(s);
     stuff = new ArrayList<Movable>();
 
-    maze = new Scene();
-    getContentPane().add(maze);
-    maze.stuff = stuff;
+    scene = new Scene();
+    getContentPane().add(scene);
+    scene.stuff = stuff;
     this.addKeyListener(this);
     this.addMouseListener(this);
 
@@ -22,13 +21,11 @@ public class Game extends JFrame implements TimerThread.Engine, KeyListener, Mou
     stuff.add(dude);
 
     setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-    setPreferredSize(maze.size);
-    setSize(maze.size);
+    setPreferredSize(scene.getPreferredSize());
+    setSize(scene.getPreferredSize());
     setResizable(false);
 
     restart();
-
-    // music = new Midi();
   }
 
   public void setup() {
@@ -36,14 +33,13 @@ public class Game extends JFrame implements TimerThread.Engine, KeyListener, Mou
     setVisible(true);
   }
 
-  public void move() {
+  public void draw() {
     for (Movable m : stuff) {
       m.act();
     }
-  }
 
-  public void draw() {
     repaint();
+
     if (dude.dead) {
       gameOver();
     }
@@ -51,8 +47,8 @@ public class Game extends JFrame implements TimerThread.Engine, KeyListener, Mou
 
   public void restart() {
     dude.dead = false;
-    dude.p.setLocation(getWidth() * 0.5, getHeight() * 0.7);
-    maze.gameOver = false;
+    dude.p.setLocation(getWidth() * 0.2, getHeight() * 0.8);
+    scene.gameOver = false;
   }
 
   public void keyPressed(KeyEvent e) { // stop moving when keys are released
@@ -62,6 +58,7 @@ public class Game extends JFrame implements TimerThread.Engine, KeyListener, Mou
         break;
       case KeyEvent.VK_LEFT:
         dude.dirX = Movable.MOVE_L;
+        
         break;
       case KeyEvent.VK_UP:
         dude.dirY = Movable.MOVE_U;
@@ -74,21 +71,9 @@ public class Game extends JFrame implements TimerThread.Engine, KeyListener, Mou
         dude.celebrate(true);
         break;
       case KeyEvent.VK_CONTROL:
+      case KeyEvent.VK_ALT:
         dude.dirX = dude.dirY = Movable.STOP;
         dude.lowhit(true);
-        break;
-
-      case KeyEvent.VK_F2:
-        // maze.grid.visible = !maze.grid.visible;
-        break;
-      case KeyEvent.VK_F3:
-        // maze.grid.showWalls = !maze.grid.showWalls;
-        break;
-      case KeyEvent.VK_F4:
-        // maze.grid.viewPositions = !maze.grid.viewPositions;
-        break;
-      case KeyEvent.VK_F5:
-        restart();
         break;
     }
   }
@@ -111,6 +96,7 @@ public class Game extends JFrame implements TimerThread.Engine, KeyListener, Mou
         dude.celebrate(false);
         break;
       case KeyEvent.VK_CONTROL:
+      case KeyEvent.VK_ALT:
         dude.lowhit(false);
         break;
     }
@@ -133,7 +119,7 @@ public class Game extends JFrame implements TimerThread.Engine, KeyListener, Mou
   }
 
   public void gameOver() {
-    maze.gameOver = true;
+    scene.gameOver = true;
   }
 
   @Override

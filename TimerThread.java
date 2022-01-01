@@ -4,9 +4,6 @@ import java.lang.InterruptedException;
 public class TimerThread extends Thread {
   public interface Engine {
     void setup();
-
-    void move();
-
     void draw();
   }
 
@@ -23,11 +20,8 @@ public class TimerThread extends Thread {
 
     while (true) {
       try {        
-        engine.move();
-
-        sleep(WAIT_TIME_MILLISECONDS);
-
         engine.draw();
+        sleep(WAIT_TIME_MILLISECONDS);
       } catch (InterruptedException e) {
         System.out.println("Timer was intrrupted by another thread");
       }
