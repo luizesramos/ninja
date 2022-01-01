@@ -12,7 +12,6 @@ public class Maze extends JPanel {
   ArrayList<Movable> stuff; // list of stuff on the screen (on top of the maze)
   Grid grid; 
   boolean gameOver;
-  Graph graph;
  
   public Maze() {
     maze = new ImageIcon("res/maze.png");
@@ -22,8 +21,6 @@ public class Maze extends JPanel {
     setPreferredSize(size);
     grid = new Grid(maze.getImage()); 
     gameOver = false;
-    graph = new Graph (121);
-    graph.selfGenerate((int)size.getWidth(), (int)size.getHeight(), grid);
   }
 
   protected void paintComponent(Graphics g) {
@@ -38,7 +35,6 @@ public class Maze extends JPanel {
       g.drawImage(maze.getImage(), 0, 0, null);
 
       grid.paint(g);
-      graph.paint(g);
 
       Iterator<Movable> it = stuff.iterator();
       while(it.hasNext()) {
