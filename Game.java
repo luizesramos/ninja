@@ -7,7 +7,7 @@ public class Game extends JFrame implements TimerThread.Engine, KeyListener, Mou
   Maze maze;
   Dude dude;
   ArrayList<Movable> stuff; // list of stuff on the screen (on top of the maze)
-  static final int catCount = 3;
+  static final int catCount = 0;
   Cat cat[];
 
   public Game(String s) {
