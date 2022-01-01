@@ -2,22 +2,17 @@ import javax.swing.*;
 import java.util.ArrayList;
 import java.awt.event.*;
 
-public class Game extends JFrame implements KeyListener, MouseListener { //, ActionListener {
-  Timer time;
-  //Midi music;
+public class Game extends JFrame implements TimerThread.Engine, KeyListener, MouseListener { // , ActionListener {
+  // Midi music;
   Maze maze;
   Dude dude;
   ArrayList<Movable> stuff; // list of stuff on the screen (on top of the maze)
   static final int catCount = 3;
   Cat cat[];
 
-  public Game (String s) {
+  public Game(String s) {
     super(s);
     stuff = new ArrayList<Movable>();
-
-    time = new Timer();
-    time.frame = this;
-    time.stuff = stuff;
 
     maze = new Maze();
     getContentPane().add(maze);
@@ -29,9 +24,9 @@ public class Game extends JFrame implements KeyListener, MouseListener { //, Act
     stuff.add(dude);
 
     cat = new Cat[catCount];
-    for(int i=0; i<catCount; i++) {
+    for (int i = 0; i < catCount; i++) {
       cat[i] = new Cat(maze.grid, dude, i);
-      stuff.add(cat[i]); 
+      stuff.add(cat[i]);
     }
 
     setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
@@ -41,87 +36,123 @@ public class Game extends JFrame implements KeyListener, MouseListener { //, Act
 
     restart();
 
-    //music = new Midi();
+    // music = new Midi();
   }
 
-  public void restart () {
+  public void setup() {
+    setLocationRelativeTo(null);
+    setVisible(true);
+  }
+
+  public void move() {
+    for (Movable m : stuff) {
+      m.act();
+    }
+  }
+
+  public void draw() {
+    repaint();
+    if (dude.dead) {
+      gameOver();
+    }
+  }
+
+  public void restart() {
     dude.dead = false;
-    dude.p.setLocation(getWidth()/2, 0.4 * getHeight());
-    if(catCount > 0) cat[0].p.setLocation(getWidth() * 0.1, getHeight() * 0.1);
-    if(catCount > 1) cat[1].p.setLocation(getWidth() * 0.1, getHeight() * 0.9);
-    if(catCount > 2) cat[2].p.setLocation(getWidth() * 0.9, getHeight() * 0.9);
-    if(catCount > 3) cat[3].p.setLocation(getWidth() * 0.9, getHeight() * 0.1);
+    dude.p.setLocation(getWidth() / 2, 0.4 * getHeight());
+    if (catCount > 0)
+      cat[0].p.setLocation(getWidth() * 0.1, getHeight() * 0.1);
+    if (catCount > 1)
+      cat[1].p.setLocation(getWidth() * 0.1, getHeight() * 0.9);
+    if (catCount > 2)
+      cat[2].p.setLocation(getWidth() * 0.9, getHeight() * 0.9);
+    if (catCount > 3)
+      cat[3].p.setLocation(getWidth() * 0.9, getHeight() * 0.1);
     maze.gameOver = false;
   }
 
-  public void keyTyped(KeyEvent e) {
-  }
-
-  //public void keyPressed(KeyEvent e) { // move character continuously
-  //  switch(e.getKeyCode()) {
-  //    case KeyEvent.VK_RIGHT: dude.dirX = Movable.MOVE_R; dude.dirY = Movable.STOP; break;
-  //    case KeyEvent.VK_LEFT:  dude.dirX = Movable.MOVE_L; dude.dirY = Movable.STOP; break;
-  //    case KeyEvent.VK_UP:    dude.dirY = Movable.MOVE_U; dude.dirX = Movable.STOP; break;
-  //    case KeyEvent.VK_DOWN:  dude.dirY = Movable.MOVE_D; dude.dirX = Movable.STOP; break;
-  //    case KeyEvent.VK_SPACE: dude.dirX = dude.dirY = Movable.STOP; break;
-
-  //    case KeyEvent.VK_F2: maze.grid.visible = !maze.grid.visible; break;
-  //    case KeyEvent.VK_F3: maze.grid.showWalls = !maze.grid.showWalls; break;
-  //    case KeyEvent.VK_F4: maze.grid.viewPositions = !maze.grid.viewPositions; break;
-  //    case KeyEvent.VK_F5: restart(); break;
-  //  }
-  //}
-  //public void keyReleased(KeyEvent e) { 
-  //}
-
   public void keyPressed(KeyEvent e) { // stop moving when keys are released
-    switch(e.getKeyCode()) {
-      case KeyEvent.VK_RIGHT: dude.dirX = Movable.MOVE_R; break;
-      case KeyEvent.VK_LEFT:  dude.dirX = Movable.MOVE_L; break;
-      case KeyEvent.VK_UP:    dude.dirY = Movable.MOVE_U; break;
-      case KeyEvent.VK_DOWN:  dude.dirY = Movable.MOVE_D; break;
-      case KeyEvent.VK_SPACE: dude.dirX = dude.dirY = Movable.STOP; dude.celebrate(true); break;
-      case KeyEvent.VK_CONTROL: dude.dirX = dude.dirY = Movable.STOP; dude.lowhit(true); break;
+    switch (e.getKeyCode()) {
+      case KeyEvent.VK_RIGHT:
+        dude.dirX = Movable.MOVE_R;
+        break;
+      case KeyEvent.VK_LEFT:
+        dude.dirX = Movable.MOVE_L;
+        break;
+      case KeyEvent.VK_UP:
+        dude.dirY = Movable.MOVE_U;
+        break;
+      case KeyEvent.VK_DOWN:
+        dude.dirY = Movable.MOVE_D;
+        break;
+      case KeyEvent.VK_SPACE:
+        dude.dirX = dude.dirY = Movable.STOP;
+        dude.celebrate(true);
+        break;
+      case KeyEvent.VK_CONTROL:
+        dude.dirX = dude.dirY = Movable.STOP;
+        dude.lowhit(true);
+        break;
 
-      case KeyEvent.VK_F2: maze.grid.visible = !maze.grid.visible; break;
-      case KeyEvent.VK_F3: maze.grid.showWalls = !maze.grid.showWalls; break;
-      case KeyEvent.VK_F4: maze.grid.viewPositions = !maze.grid.viewPositions; break;
-      case KeyEvent.VK_F5: restart(); break;
+      case KeyEvent.VK_F2:
+        maze.grid.visible = !maze.grid.visible;
+        break;
+      case KeyEvent.VK_F3:
+        maze.grid.showWalls = !maze.grid.showWalls;
+        break;
+      case KeyEvent.VK_F4:
+        maze.grid.viewPositions = !maze.grid.viewPositions;
+        break;
+      case KeyEvent.VK_F5:
+        restart();
+        break;
     }
   }
 
-  public void keyReleased(KeyEvent e) { 
-    switch(e.getKeyCode()) {
-      case KeyEvent.VK_RIGHT: dude.dirX = Movable.STOP; break;
-      case KeyEvent.VK_LEFT:  dude.dirX = Movable.STOP; break;
-      case KeyEvent.VK_UP:    dude.dirY = Movable.STOP; break;
-      case KeyEvent.VK_DOWN:  dude.dirY = Movable.STOP; break;
-      case KeyEvent.VK_SPACE: dude.celebrate(false); break;
-      case KeyEvent.VK_CONTROL: dude.lowhit(false); break;
+  public void keyReleased(KeyEvent e) {
+    switch (e.getKeyCode()) {
+      case KeyEvent.VK_RIGHT:
+        dude.dirX = Movable.STOP;
+        break;
+      case KeyEvent.VK_LEFT:
+        dude.dirX = Movable.STOP;
+        break;
+      case KeyEvent.VK_UP:
+        dude.dirY = Movable.STOP;
+        break;
+      case KeyEvent.VK_DOWN:
+        dude.dirY = Movable.STOP;
+        break;
+      case KeyEvent.VK_SPACE:
+        dude.celebrate(false);
+        break;
+      case KeyEvent.VK_CONTROL:
+        dude.lowhit(false);
+        break;
     }
   }
 
-  public void mousePressed(MouseEvent e) { }
-  public void mouseReleased(MouseEvent e) { }
-  public void mouseEntered(MouseEvent e) { }
-  public void mouseExited(MouseEvent e) { }
+  public void mousePressed(MouseEvent e) {
+  }
+
+  public void mouseReleased(MouseEvent e) {
+  }
+
+  public void mouseEntered(MouseEvent e) {
+  }
+
+  public void mouseExited(MouseEvent e) {
+  }
+
   public void mouseClicked(MouseEvent e) {
-    System.out.println("COORD "+ e.getX() + " " + e.getY());
-  }
-
-  public static Game setup () {
-    Game frame = new Game("Raining Dijikstra");
-    frame.setLocationRelativeTo(null);
-    frame.setVisible(true);
-    return frame;
+    System.out.println("COORD " + e.getX() + " " + e.getY());
   }
 
   public void gameOver() {
     maze.gameOver = true;
   }
 
-  public static void main(String [] args) {
-    Game g = setup();  
-    g.time.start();
+  @Override
+  public void keyTyped(KeyEvent e) {
   }
 }
