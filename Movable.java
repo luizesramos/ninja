@@ -1,6 +1,4 @@
 import java.awt.*;
-import javax.swing.*;
-import java.util.ArrayList;
 
 public class Movable {
   static final int STOP=-1;

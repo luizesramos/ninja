@@ -1,6 +1,3 @@
-import java.awt.*;
-import javax.swing.*;
-
 public class Dude extends Movable {
   final static int STILL_FRAMES = 0; 
   final static int WALK_FRAMES  = 1;

@@ -2,7 +2,6 @@ import java.awt.*;
 import javax.swing.*;
 import java.util.ArrayList;
 import java.util.Iterator;
-import java.util.ListIterator;
 
 public class Maze extends JPanel {
   static final int FLOOR = 0;

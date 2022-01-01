@@ -7,8 +7,6 @@ public class Game extends JFrame implements TimerThread.Engine, KeyListener, Mou
   Maze maze;
   Dude dude;
   ArrayList<Movable> stuff; // list of stuff on the screen (on top of the maze)
-  static final int catCount = 0;
-  Cat cat[];
 
   public Game(String s) {
     super(s);
@@ -22,12 +20,6 @@ public class Game extends JFrame implements TimerThread.Engine, KeyListener, Mou
 
     dude = new Dude(maze.grid);
     stuff.add(dude);
-
-    cat = new Cat[catCount];
-    for (int i = 0; i < catCount; i++) {
-      cat[i] = new Cat(maze.grid, dude, i);
-      stuff.add(cat[i]);
-    }
 
     setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
     setPreferredSize(maze.size);
@@ -60,14 +52,6 @@ public class Game extends JFrame implements TimerThread.Engine, KeyListener, Mou
   public void restart() {
     dude.dead = false;
     dude.p.setLocation(getWidth() / 2, 0.4 * getHeight());
-    if (catCount > 0)
-      cat[0].p.setLocation(getWidth() * 0.1, getHeight() * 0.1);
-    if (catCount > 1)
-      cat[1].p.setLocation(getWidth() * 0.1, getHeight() * 0.9);
-    if (catCount > 2)
-      cat[2].p.setLocation(getWidth() * 0.9, getHeight() * 0.9);
-    if (catCount > 3)
-      cat[3].p.setLocation(getWidth() * 0.9, getHeight() * 0.1);
     maze.gameOver = false;
   }
 

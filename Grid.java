@@ -1,6 +1,5 @@
 import java.awt.*;
 import java.awt.image.PixelGrabber;
-import javax.swing.*;
 
 /*
 A Grid is a map of the Maze into coarser squares of size 'gridX'.  We take the

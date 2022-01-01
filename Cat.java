@@ -1,5 +1,3 @@
-import java.awt.*;
-import javax.swing.*;
 import java.util.Random;
 import java.lang.Math;
 
