@@ -3,28 +3,29 @@ import java.util.ArrayList;
 import java.awt.event.*;
 
 public class Game extends JFrame implements TimerThread.Engine, KeyListener, MouseListener { // , ActionListener {
-  private Scene scene;
   private Dude dude;
-  private ArrayList<Movable> stuff; // list of stuff on the screen (on top of the scene)
+  private Scene scene;
 
   public Game(String s) {
     super(s);
-    stuff = new ArrayList<Movable>();
 
+    dude = new Dude();
     scene = new Scene();
-    getContentPane().add(scene);
-    scene.stuff = stuff;
+    scene.setMovables(new ArrayList<>() {
+      {
+        add(dude);
+      }
+    });
+
     this.addKeyListener(this);
     this.addMouseListener(this);
 
-    dude = new Dude();
-    stuff.add(dude);
-
+    getContentPane().add(scene);
     setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
     setPreferredSize(scene.getPreferredSize());
     setSize(scene.getPreferredSize());
     setResizable(false);
-
+    setUndecorated(true); // removes title bar
     restart();
   }
 
@@ -34,45 +35,35 @@ public class Game extends JFrame implements TimerThread.Engine, KeyListener, Mou
   }
 
   public void draw() {
-    for (Movable m : stuff) {
-      m.act();
-    }
-
+    scene.update();
     repaint();
-
-    if (dude.dead) {
-      gameOver();
-    }
   }
 
   public void restart() {
-    dude.dead = false;
     dude.p.setLocation(getWidth() * 0.2, getHeight() * 0.8);
-    scene.gameOver = false;
   }
 
   public void keyPressed(KeyEvent e) { // stop moving when keys are released
     switch (e.getKeyCode()) {
       case KeyEvent.VK_RIGHT:
-        dude.dirX = Movable.MOVE_R;
+        dude.change.x = Movable.stepX;
         break;
       case KeyEvent.VK_LEFT:
-        dude.dirX = Movable.MOVE_L;
-        
+        dude.change.x = -Movable.stepX;
         break;
       case KeyEvent.VK_UP:
-        dude.dirY = Movable.MOVE_U;
+        dude.change.y = Movable.stepY;
         break;
       case KeyEvent.VK_DOWN:
-        dude.dirY = Movable.MOVE_D;
+        dude.change.y = -Movable.stepY;
         break;
       case KeyEvent.VK_SPACE:
-        dude.dirX = dude.dirY = Movable.STOP;
+        dude.change.x = dude.change.y = Movable.STOP;
         dude.celebrate(true);
         break;
       case KeyEvent.VK_CONTROL:
       case KeyEvent.VK_ALT:
-        dude.dirX = dude.dirY = Movable.STOP;
+        dude.change.x = dude.change.y = Movable.STOP;
         dude.lowhit(true);
         break;
     }
@@ -81,16 +72,12 @@ public class Game extends JFrame implements TimerThread.Engine, KeyListener, Mou
   public void keyReleased(KeyEvent e) {
     switch (e.getKeyCode()) {
       case KeyEvent.VK_RIGHT:
-        dude.dirX = Movable.STOP;
-        break;
       case KeyEvent.VK_LEFT:
-        dude.dirX = Movable.STOP;
+        dude.change.x = Movable.STOP;
         break;
       case KeyEvent.VK_UP:
-        dude.dirY = Movable.STOP;
-        break;
       case KeyEvent.VK_DOWN:
-        dude.dirY = Movable.STOP;
+        dude.change.y = Movable.STOP;
         break;
       case KeyEvent.VK_SPACE:
         dude.celebrate(false);
@@ -116,10 +103,6 @@ public class Game extends JFrame implements TimerThread.Engine, KeyListener, Mou
 
   public void mouseClicked(MouseEvent e) {
     System.out.println("COORD " + e.getX() + " " + e.getY());
-  }
-
-  public void gameOver() {
-    scene.gameOver = true;
   }
 
   @Override

@@ -1,48 +1,48 @@
+
 public class Dude extends Movable {
-  final static int STILL_FRAMES = 0; 
-  final static int WALK_FRAMES  = 1;
-  final static int CELEB_FRAMES  = 2;
-  final static int LOHIT_FRAMES  = 3;
-  boolean dead, celebrating, hitting;
+  private enum State {
+    IDLE("idle"), WALKING("walk"), CELEBRATING("celeb"), LOW_PUNCH("lopunch"), DEAD("dead");
+
+    final String rawValue;
+
+    State(String rawValue) {
+      this.rawValue = rawValue;
+    }
+  }
+
+  private State state = State.IDLE;
 
   public Dude() {
-    int i;
-    for(i=1; i<=7; i++) spriteMan.addSprite("res/rain/rain-stop"+i+".gif");
-    for(i=1; i<=9; i++) spriteMan.addSprite("res/rain/rain-walk"+i+".gif");
-    for(i=1; i<=4; i++) spriteMan.addSprite("res/rain/rain-celeb"+i+".gif");
-    for(i=3; i>=1; i--) spriteMan.addSprite("res/rain/rain-celeb"+i+".gif");
-    for(i=1; i<=5; i++) spriteMan.addSprite("res/rain/rain-lohit"+i+".gif");
-
-    spriteMan.addPartition(0,   6); // STILL frames
-    spriteMan.addPartition(7,  15); // WALK frames
-    spriteMan.addPartition(16, 22); // CELEBRATE frames
-    spriteMan.addPartition(23, 27); // LOW HIT frames
-    spriteMan.setActivePartition(STILL_FRAMES);
+    spriteMan.addPartition(State.IDLE.rawValue, new SpritePartition("res/rain/idle", 7));
+    spriteMan.addPartition(State.WALKING.rawValue, new SpritePartition("res/rain/walk", 9));
+    spriteMan.addPartition(State.LOW_PUNCH.rawValue, new SpritePartition("res/rain/lopunch", 5));
+    spriteMan.addPartition(State.CELEBRATING.rawValue, new SpritePartition("res/rain/celeb", 4, SpritePartition.LoopType.BACK_AND_FORTH));
+    spriteMan.setActivePartition(state.rawValue);
 
     init(spriteMan.getMaxImageDimension(), 0.25);
-
-    dirX = Movable.STOP;
-    dirY = Movable.STOP;
-    dead = celebrating = hitting = false;
   }
 
-  public void act () {
-    move();
-    if(moving)
-      spriteMan.setActivePartition (WALK_FRAMES);
-    else if (celebrating)
-      spriteMan.setActivePartition (CELEB_FRAMES);
-    else if (hitting)
-      spriteMan.setActivePartition (LOHIT_FRAMES);
-    else
-      spriteMan.setActivePartition (STILL_FRAMES);
+  public void act() {
+    boolean isMoving = move();
+    
+    if (isMoving) {
+      if (state == State.IDLE) {
+        state = State.WALKING;
+      }
+    } else {
+      if (state == State.WALKING) {
+        state = State.IDLE;
+      }
+    }
+
+    spriteMan.setActivePartition(state.rawValue);
   }
 
-  public void celebrate (boolean status) {
-    celebrating = status;
+  public void celebrate(boolean isActive) {
+    state = isActive ? State.CELEBRATING : State.IDLE;
   }
 
-  public void lowhit (boolean status) {
-    hitting = status;
+  public void lowhit(boolean isActive) {
+    state = isActive ? State.LOW_PUNCH : State.IDLE;
   }
 }
