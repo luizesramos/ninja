@@ -1,7 +1,14 @@
 
 public class Dude extends Movable {
   private enum State {
-    IDLE("idle"), WALKING("walk"), CELEBRATING("celeb"), LOW_PUNCH("lopunch"), DEAD("dead");
+    IDLE("idle"), 
+    WALKING("walk"), 
+    CELEBRATING("celeb"), 
+    LOW_PUNCH("lopunch"), 
+    DEAD("dead"), 
+    JUMPING("jump"), 
+    JUMP_KICK("jumpkick"), 
+    JUMP_PUNCH("jumppunch");
 
     final String rawValue;
 
@@ -12,7 +19,8 @@ public class Dude extends Movable {
 
   private State state = State.IDLE;
 
-  public Dude() {
+  public Dude(XY changeRate) {
+    super(changeRate);
     spriteMan.addPartition(State.IDLE.rawValue, new SpritePartition("res/rain/idle", 7));
     spriteMan.addPartition(State.WALKING.rawValue, new SpritePartition("res/rain/walk", 9));
     spriteMan.addPartition(State.LOW_PUNCH.rawValue, new SpritePartition("res/rain/lopunch", 5));
@@ -38,11 +46,35 @@ public class Dude extends Movable {
     spriteMan.setActivePartition(state.rawValue);
   }
 
+  public void moveRight() {
+    change.setX(changeRate.x());
+  }
+
+  public void moveLeft() {
+    change.setX(-changeRate.x());
+  }
+
+  public void duck() {
+    change.setY(0);
+  }
+
+  public void jump() {
+    state = State.JUMPING;
+  }
+
+  public void stopX() {
+    change.setX(0);
+  }
+
   public void celebrate(boolean isActive) {
     state = isActive ? State.CELEBRATING : State.IDLE;
   }
 
   public void lowhit(boolean isActive) {
-    state = isActive ? State.LOW_PUNCH : State.IDLE;
+    if (state == State.JUMPING) {
+      state = State.JUMP_PUNCH;
+    } else {
+      state = isActive ? State.LOW_PUNCH : State.IDLE;
+    }
   }
 }

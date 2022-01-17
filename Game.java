@@ -9,7 +9,7 @@ public class Game extends JFrame implements TimerThread.Engine, KeyListener, Mou
   public Game(String s) {
     super(s);
 
-    dude = new Dude();
+    dude = new Dude(new XY(10, 5));
     scene = new Scene();
     scene.setMovables(new ArrayList<>() {
       {
@@ -40,30 +40,28 @@ public class Game extends JFrame implements TimerThread.Engine, KeyListener, Mou
   }
 
   public void restart() {
-    dude.p.setLocation(getWidth() * 0.2, getHeight() * 0.8);
+    dude.p.set(getWidth() * 0.2, getHeight() * 0.8);
   }
 
   public void keyPressed(KeyEvent e) { // stop moving when keys are released
     switch (e.getKeyCode()) {
       case KeyEvent.VK_RIGHT:
-        dude.change.x = Movable.stepX;
+        dude.moveRight();
         break;
       case KeyEvent.VK_LEFT:
-        dude.change.x = -Movable.stepX;
+        dude.moveLeft();
         break;
       case KeyEvent.VK_UP:
-        dude.change.y = Movable.stepY;
+        dude.jump();
         break;
       case KeyEvent.VK_DOWN:
-        dude.change.y = -Movable.stepY;
+        dude.duck();
         break;
-      case KeyEvent.VK_SPACE:
-        dude.change.x = dude.change.y = Movable.STOP;
+      case KeyEvent.VK_SPACE:        
         dude.celebrate(true);
         break;
       case KeyEvent.VK_CONTROL:
       case KeyEvent.VK_ALT:
-        dude.change.x = dude.change.y = Movable.STOP;
         dude.lowhit(true);
         break;
     }
@@ -73,11 +71,10 @@ public class Game extends JFrame implements TimerThread.Engine, KeyListener, Mou
     switch (e.getKeyCode()) {
       case KeyEvent.VK_RIGHT:
       case KeyEvent.VK_LEFT:
-        dude.change.x = Movable.STOP;
+        dude.stopX();
         break;
       case KeyEvent.VK_UP:
-      case KeyEvent.VK_DOWN:
-        dude.change.y = Movable.STOP;
+      case KeyEvent.VK_DOWN:        
         break;
       case KeyEvent.VK_SPACE:
         dude.celebrate(false);

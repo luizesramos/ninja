@@ -20,8 +20,8 @@ public class SpriteManager {
     return activePartition.imageForCycle(currCyc);
   }
 
-  public Dimension getMaxImageDimension() {
+  public XY getMaxImageDimension() {
     // TODO: this was used for collision detection. Research a better way.
-    return new Dimension(100, 100);
+    return new XY(100, 100);
   }
 }
